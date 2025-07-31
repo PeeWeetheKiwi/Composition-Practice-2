@@ -3,8 +3,8 @@
     <h1>Expense Tracker</h1>
   </header>
   <section>
-    <div>Available Funds: {{ availableFunds }}</div>
-    <div>Total Expenses: {{ currentExpenses }}</div>
+    <div>Available Funds: {{ availFunds }}</div>
+    <div>Total Expenses: {{ expenses.currentExpense }}</div>
     <hr />
     <div>Funds left: {{ remainingFunds }}</div>
   </section>
@@ -12,40 +12,66 @@
     <form @submit.prevent="addExpense">
       <div>
         <label for="amount">Amount</label>
-        <input id="amount" type="number" v-model="enteredExpense" />
+        <input id="amount" type="number" v-model="expenses.enteredExpense" />
       </div>
       <button>Add Expense</button>
     </form>
   </section>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      availableFunds: 100,
-      currentExpenses: 0,
-      enteredExpense: 0,
-    };
-  },
-  computed: {
-    remainingFunds() {
-      return this.availableFunds - this.currentExpenses;
-    },
-  },
-  methods: {
-    addExpense() {
-      this.currentExpenses += this.enteredExpense;
-    },
-  },
-  watch: {
-    remainingFunds(val) {
-      if (val < 0) {
-        alert('You are broke!');
-      }
-    },
-  },
-};
+<script setup>
+import { ref, reactive, computed, watch } from 'vue';
+
+const expenses = reactive({
+  currentExpense: 0,
+  enteredExpense: 0
+})
+
+const availFunds = ref(100);
+
+const remainingFunds = computed(() => availFunds.value - expenses.currentExpense);
+
+function addExpense() {
+  if(expenses.enteredExpense <= 100) {
+    expenses.currentExpense += expenses.enteredExpense;
+  }else {
+    alert("You Can't Afford That!");
+  }
+}
+
+watch(remainingFunds, (newVal, oldVal) => {
+  if(newVal < 0) {
+    alert('Broke Boy Alert!');
+  }
+
+
+})
+// export default {
+//   data() {
+//     return {
+//       availableFunds: 100,
+//       currentExpenses: 0,
+//       enteredExpense: 0,
+//     };
+//   },
+//   computed: {
+//     remainingFunds() {
+//       return this.availableFunds - this.currentExpenses;
+//     },
+//   },
+//   methods: {
+//     addExpense() {
+//       this.currentExpenses += this.enteredExpense;
+//     },
+//   },
+//   watch: {
+//     remainingFunds(val) {
+//       if (val < 0) {
+//         alert('You are broke!');
+//       }
+//     },
+//   },
+// };
 </script>
 
 <style>
